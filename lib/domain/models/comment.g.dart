@@ -1,0 +1,19 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+part of 'comment.dart';
+
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+_Comment _$CommentFromJson(Map<String, dynamic> json) => _Comment(
+  id: json['id'] as String,
+  content: json['content'] as String,
+  createdAt: DateTime.parse(json['createdAt'] as String),
+);
+
+Map<String, dynamic> _$CommentToJson(_Comment instance) => <String, dynamic>{
+  'id': instance.id,
+  'content': instance.content,
+  'createdAt': instance.createdAt.toIso8601String(),
+};

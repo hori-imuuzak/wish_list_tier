@@ -1,0 +1,53 @@
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+_WishItem _$WishItemFromJson(Map<String, dynamic> json) => _WishItem(
+  id: json['id'] as String,
+  title: json['title'] as String,
+  description: json['description'] as String? ?? '',
+  imagePath: json['imagePath'] as String?,
+  price: (json['price'] as num?)?.toDouble(),
+  url: json['url'] as String?,
+  deadline: json['deadline'] == null
+      ? null
+      : DateTime.parse(json['deadline'] as String),
+  tier: $enumDecodeNullable(_$TierTypeEnumMap, json['tier']) ?? TierType.c,
+  isCompleted: json['isCompleted'] as bool? ?? false,
+  isDeleted: json['isDeleted'] as bool? ?? false,
+  createdAt: DateTime.parse(json['createdAt'] as String),
+  updatedAt: DateTime.parse(json['updatedAt'] as String),
+  comments:
+      (json['comments'] as List<dynamic>?)
+          ?.map((e) => Comment.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+      const [],
+);
+
+Map<String, dynamic> _$WishItemToJson(_WishItem instance) => <String, dynamic>{
+  'id': instance.id,
+  'title': instance.title,
+  'description': instance.description,
+  'imagePath': instance.imagePath,
+  'price': instance.price,
+  'url': instance.url,
+  'deadline': instance.deadline?.toIso8601String(),
+  'tier': _$TierTypeEnumMap[instance.tier]!,
+  'isCompleted': instance.isCompleted,
+  'isDeleted': instance.isDeleted,
+  'createdAt': instance.createdAt.toIso8601String(),
+  'updatedAt': instance.updatedAt.toIso8601String(),
+  'comments': instance.comments,
+};
+
+const _$TierTypeEnumMap = {
+  TierType.ss: 'ss',
+  TierType.s: 's',
+  TierType.a: 'a',
+  TierType.b: 'b',
+  TierType.c: 'c',
+  TierType.d: 'd',
+  TierType.e: 'e',
+  TierType.f: 'f',
+  TierType.g: 'g',
+};
