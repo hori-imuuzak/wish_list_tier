@@ -1,13 +1,32 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:wish_list_tier/data/repositories/local_wish_list_repository.dart';
+import 'package:wish_list_tier/data/repositories/firebase_wish_list_repository.dart';
 import 'package:wish_list_tier/domain/repositories/wish_list_repository.dart';
 
-final sharedPreferencesProvider = Provider<SharedPreferences>((ref) {
-  throw UnimplementedError();
-});
+part 'providers.g.dart';
 
-final wishListRepositoryProvider = Provider<WishListRepository>((ref) {
-  final prefs = ref.watch(sharedPreferencesProvider);
-  return LocalWishListRepository(prefs);
-});
+@Riverpod(keepAlive: true)
+SharedPreferences sharedPreferences(Ref ref) {
+  throw UnimplementedError();
+}
+
+@Riverpod(keepAlive: true)
+FirebaseAuth firebaseAuth(Ref ref) {
+  return FirebaseAuth.instance;
+}
+
+@Riverpod(keepAlive: true)
+FirebaseFirestore firebaseFirestore(Ref ref) {
+  return FirebaseFirestore.instance;
+}
+
+@Riverpod(keepAlive: true)
+WishListRepository wishListRepository(Ref ref) {
+  return FirebaseWishListRepository(
+    auth: ref.watch(firebaseAuthProvider),
+    firestore: ref.watch(firebaseFirestoreProvider),
+    prefs: ref.watch(sharedPreferencesProvider),
+  );
+}

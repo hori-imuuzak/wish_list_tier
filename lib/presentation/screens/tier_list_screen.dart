@@ -8,6 +8,7 @@ import 'package:wish_list_tier/domain/models/wish_item.dart';
 import 'package:wish_list_tier/presentation/screens/archive_screen.dart';
 import 'package:wish_list_tier/presentation/screens/item_detail_screen.dart';
 import 'package:wish_list_tier/presentation/screens/item_editor_screen.dart';
+import 'package:wish_list_tier/presentation/screens/settings_screen.dart';
 import 'package:wish_list_tier/presentation/viewmodels/tier_list_viewmodel.dart';
 
 class TierListScreen extends ConsumerStatefulWidget {
@@ -66,6 +67,16 @@ class _TierListScreenState extends ConsumerState<TierListScreen>
                   tabs: categories.map((c) => Tab(text: c.name)).toList(),
                 ),
                 actions: [
+                  IconButton(
+                    icon: const Icon(Icons.settings_outlined),
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => const SettingsScreen(),
+                        ),
+                      );
+                    },
+                  ),
                   IconButton(
                     icon: const Icon(Icons.add_circle_outline),
                     onPressed: () =>
