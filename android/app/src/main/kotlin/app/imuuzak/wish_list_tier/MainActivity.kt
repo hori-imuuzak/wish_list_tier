@@ -1,4 +1,4 @@
-package com.example.wish_list_tier
+package app.imuuzak.wish_list_tier
 
 import io.flutter.embedding.android.FlutterActivity
 
