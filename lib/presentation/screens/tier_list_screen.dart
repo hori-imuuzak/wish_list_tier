@@ -185,7 +185,7 @@ class _TierListScreenState extends ConsumerState<TierListScreen>
                   ),
                 );
               },
-              child: const Text('購入する'),
+              child: const Text('追加画面へ'),
             ),
           ],
         ),

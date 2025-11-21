@@ -97,6 +97,12 @@ class _MyAppState extends ConsumerState<MyApp> {
           backgroundColor: Color(0xFFFFB7B2),
           foregroundColor: Colors.white,
         ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFFFFB7B2),
+            foregroundColor: Colors.white,
+          ),
+        ),
         cardTheme: CardThemeData(
           elevation: 2,
           shape: RoundedRectangleBorder(
