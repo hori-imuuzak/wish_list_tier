@@ -381,6 +381,20 @@ class _ItemCard extends StatelessWidget {
                       width: 80,
                       height: 80,
                     ),
+                  )
+                else
+                  Container(
+                    width: 80,
+                    height: 80,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      borderRadius: BorderRadius.circular(12.0),
+                    ),
+                    child: Icon(
+                      Icons.image_outlined,
+                      color: Colors.grey[400],
+                      size: 32,
+                    ),
                   ),
                 Positioned(
                   bottom: 0,
