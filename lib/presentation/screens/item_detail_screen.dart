@@ -41,25 +41,6 @@ class ItemDetailScreen extends ConsumerWidget {
               );
             },
           ),
-          PopupMenuButton<String>(
-            onSelected: (value) async {
-              if (value == 'complete') {
-                await ref
-                    .read(tierListViewModelProvider.notifier)
-                    .completeItem(currentItem.id);
-                if (context.mounted) Navigator.of(context).pop();
-              } else if (value == 'delete') {
-                await ref
-                    .read(tierListViewModelProvider.notifier)
-                    .deleteItem(currentItem.id);
-                if (context.mounted) Navigator.of(context).pop();
-              }
-            },
-            itemBuilder: (context) => [
-              const PopupMenuItem(value: 'complete', child: Text('完了にする')),
-              const PopupMenuItem(value: 'delete', child: Text('削除')),
-            ],
-          ),
         ],
       ),
       body: SafeArea(
@@ -100,7 +81,7 @@ class ItemDetailScreen extends ConsumerWidget {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
-                      'Tier ${currentItem.tier.label}',
+                      currentItem.tier.label,
                       style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -110,7 +91,7 @@ class ItemDetailScreen extends ConsumerWidget {
                   const Spacer(),
                   if (currentItem.price != null)
                     Text(
-                      '¥${currentItem.price}',
+                      '¥${NumberFormat('#,###').format(currentItem.price!.toInt())}',
                       style: Theme.of(context).textTheme.headlineSmall
                           ?.copyWith(
                             color: Colors.pinkAccent,
@@ -182,9 +163,74 @@ class ItemDetailScreen extends ConsumerWidget {
                   ),
                 ),
               const SizedBox(height: 32),
+              // Action buttons
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () async {
+                        await ref
+                            .read(tierListViewModelProvider.notifier)
+                            .completeItem(currentItem.id);
+                        if (context.mounted) Navigator.of(context).pop();
+                      },
+                      icon: const Icon(Icons.check_circle_outline),
+                      label: const Text('完了にする'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () async {
+                        final confirm = await showDialog<bool>(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: const Text('削除確認'),
+                            content: const Text('このアイテムを削除しますか？'),
+                            actions: [
+                              TextButton(
+                                onPressed: () =>
+                                    Navigator.of(context).pop(false),
+                                child: const Text('キャンセル'),
+                              ),
+                              ElevatedButton(
+                                onPressed: () =>
+                                    Navigator.of(context).pop(true),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.red,
+                                ),
+                                child: const Text('削除'),
+                              ),
+                            ],
+                          ),
+                        );
+                        if (confirm == true) {
+                          await ref
+                              .read(tierListViewModelProvider.notifier)
+                              .deleteItem(currentItem.id);
+                          if (context.mounted) Navigator.of(context).pop();
+                        }
+                      },
+                      icon: const Icon(Icons.delete_outline),
+                      label: const Text('削除'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 32),
               const Divider(),
               Text(
-                'コメント',
+                'メモ',
                 style: Theme.of(
                   context,
                 ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
@@ -290,7 +336,7 @@ class _AddCommentWidgetState extends ConsumerState<_AddCommentWidget> {
           child: TextField(
             controller: _controller,
             decoration: InputDecoration(
-              hintText: 'コメントを追加...',
+              hintText: 'メモを追加...',
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(30),
               ),

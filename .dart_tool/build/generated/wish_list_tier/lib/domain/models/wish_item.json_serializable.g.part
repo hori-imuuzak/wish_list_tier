@@ -18,11 +18,9 @@ _WishItem _$WishItemFromJson(Map<String, dynamic> json) => _WishItem(
   isDeleted: json['isDeleted'] as bool? ?? false,
   createdAt: DateTime.parse(json['createdAt'] as String),
   updatedAt: DateTime.parse(json['updatedAt'] as String),
-  comments:
-      (json['comments'] as List<dynamic>?)
-          ?.map((e) => Comment.fromJson(e as Map<String, dynamic>))
-          .toList() ??
-      const [],
+  comments: json['comments'] == null
+      ? const []
+      : _commentsFromJson(json['comments'] as List?),
 );
 
 Map<String, dynamic> _$WishItemToJson(_WishItem instance) => <String, dynamic>{
@@ -39,7 +37,7 @@ Map<String, dynamic> _$WishItemToJson(_WishItem instance) => <String, dynamic>{
   'isDeleted': instance.isDeleted,
   'createdAt': instance.createdAt.toIso8601String(),
   'updatedAt': instance.updatedAt.toIso8601String(),
-  'comments': instance.comments,
+  'comments': _commentsToJson(instance.comments),
 };
 
 const _$TierTypeEnumMap = {

@@ -82,8 +82,28 @@ class TierListViewModel extends _$TierListViewModel {
 
   Future<void> moveItemToTier(String id, TierType tier) async {
     final repository = ref.read(wishListRepositoryProvider);
-    await repository.moveItemToTier(id, tier);
-    ref.invalidateSelf();
+    // Optimistic update: update UI immediately
+    final currentItems = state.value ?? [];
+    final itemIndex = currentItems.indexWhere((item) => item.id == id);
+
+    if (itemIndex != -1) {
+      final updatedItem = currentItems[itemIndex].copyWith(
+        tier: tier,
+        updatedAt: DateTime.now(),
+      );
+      final newItems = List<WishItem>.from(currentItems);
+      newItems[itemIndex] = updatedItem;
+      state = AsyncValue.data(newItems);
+
+      // Then update repository in background
+      try {
+        await repository.moveItemToTier(id, tier);
+      } catch (e) {
+        // If error, revert to previous state
+        state = AsyncValue.data(currentItems);
+        rethrow;
+      }
+    }
   }
 
   Future<void> completeItem(String id) async {

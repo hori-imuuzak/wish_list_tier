@@ -21,9 +21,20 @@ abstract class WishItem with _$WishItem {
     @Default(false) bool isDeleted,
     required DateTime createdAt,
     required DateTime updatedAt,
-    @Default([]) List<Comment> comments,
+    @JsonKey(fromJson: _commentsFromJson, toJson: _commentsToJson)
+    @Default([])
+    List<Comment> comments,
   }) = _WishItem;
 
   factory WishItem.fromJson(Map<String, dynamic> json) =>
       _$WishItemFromJson(json);
+}
+
+List<Comment> _commentsFromJson(List<dynamic>? json) {
+  if (json == null) return [];
+  return json.map((e) => Comment.fromJson(e as Map<String, dynamic>)).toList();
+}
+
+List<Map<String, dynamic>> _commentsToJson(List<Comment> comments) {
+  return comments.map((e) => e.toJson()).toList();
 }

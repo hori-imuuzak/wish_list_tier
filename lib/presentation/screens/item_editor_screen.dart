@@ -108,28 +108,68 @@ class _ItemEditorScreenState extends ConsumerState<ItemEditorScreen> {
   }
 
   void _showDatePicker() {
+    DateTime tempDate = _deadline ?? DateTime.now();
+
     showCupertinoModalPopup(
       context: context,
       builder: (BuildContext context) {
         return Container(
-          height: 216,
-          padding: const EdgeInsets.only(top: 6.0),
-          margin: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-          ),
+          height: 280,
           color: CupertinoColors.systemBackground.resolveFrom(context),
-          child: SafeArea(
-            top: false,
-            child: CupertinoDatePicker(
-              initialDateTime: _deadline ?? DateTime.now(),
-              mode: CupertinoDatePickerMode.date,
-              use24hFormat: true,
-              onDateTimeChanged: (DateTime newDate) {
-                setState(() {
-                  _deadline = newDate;
-                });
-              },
-            ),
+          child: Column(
+            children: [
+              // Action buttons
+              Container(
+                color: CupertinoColors.systemBackground.resolveFrom(context),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    CupertinoButton(
+                      child: const Text(
+                        'クリア',
+                        style: TextStyle(
+                          color: Colors.red,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _deadline = null;
+                        });
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                    CupertinoButton(
+                      child: const Text(
+                        '完了',
+                        style: TextStyle(
+                          color: Color(0xFFFFB7B2),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _deadline = tempDate;
+                        });
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              // Date picker
+              SizedBox(
+                height: 216,
+                child: CupertinoDatePicker(
+                  initialDateTime: tempDate,
+                  mode: CupertinoDatePickerMode.date,
+                  use24hFormat: true,
+                  onDateTimeChanged: (DateTime newDate) {
+                    tempDate = newDate;
+                  },
+                ),
+              ),
+            ],
           ),
         );
       },

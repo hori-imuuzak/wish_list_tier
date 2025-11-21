@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$WishItem {
 
- String get id; String get title; String get description; String? get categoryId; String? get imagePath; double? get price; String? get url; DateTime? get deadline; TierType get tier; bool get isCompleted; bool get isDeleted; DateTime get createdAt; DateTime get updatedAt; List<Comment> get comments;
+ String get id; String get title; String get description; String? get categoryId; String? get imagePath; double? get price; String? get url; DateTime? get deadline; TierType get tier; bool get isCompleted; bool get isDeleted; DateTime get createdAt; DateTime get updatedAt;@JsonKey(fromJson: _commentsFromJson, toJson: _commentsToJson) List<Comment> get comments;
 /// Create a copy of WishItem
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -48,7 +48,7 @@ abstract mixin class $WishItemCopyWith<$Res>  {
   factory $WishItemCopyWith(WishItem value, $Res Function(WishItem) _then) = _$WishItemCopyWithImpl;
 @useResult
 $Res call({
- String id, String title, String description, String? categoryId, String? imagePath, double? price, String? url, DateTime? deadline, TierType tier, bool isCompleted, bool isDeleted, DateTime createdAt, DateTime updatedAt, List<Comment> comments
+ String id, String title, String description, String? categoryId, String? imagePath, double? price, String? url, DateTime? deadline, TierType tier, bool isCompleted, bool isDeleted, DateTime createdAt, DateTime updatedAt,@JsonKey(fromJson: _commentsFromJson, toJson: _commentsToJson) List<Comment> comments
 });
 
 
@@ -166,7 +166,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title,  String description,  String? categoryId,  String? imagePath,  double? price,  String? url,  DateTime? deadline,  TierType tier,  bool isCompleted,  bool isDeleted,  DateTime createdAt,  DateTime updatedAt,  List<Comment> comments)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title,  String description,  String? categoryId,  String? imagePath,  double? price,  String? url,  DateTime? deadline,  TierType tier,  bool isCompleted,  bool isDeleted,  DateTime createdAt,  DateTime updatedAt, @JsonKey(fromJson: _commentsFromJson, toJson: _commentsToJson)  List<Comment> comments)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _WishItem() when $default != null:
 return $default(_that.id,_that.title,_that.description,_that.categoryId,_that.imagePath,_that.price,_that.url,_that.deadline,_that.tier,_that.isCompleted,_that.isDeleted,_that.createdAt,_that.updatedAt,_that.comments);case _:
@@ -187,7 +187,7 @@ return $default(_that.id,_that.title,_that.description,_that.categoryId,_that.im
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  String description,  String? categoryId,  String? imagePath,  double? price,  String? url,  DateTime? deadline,  TierType tier,  bool isCompleted,  bool isDeleted,  DateTime createdAt,  DateTime updatedAt,  List<Comment> comments)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  String description,  String? categoryId,  String? imagePath,  double? price,  String? url,  DateTime? deadline,  TierType tier,  bool isCompleted,  bool isDeleted,  DateTime createdAt,  DateTime updatedAt, @JsonKey(fromJson: _commentsFromJson, toJson: _commentsToJson)  List<Comment> comments)  $default,) {final _that = this;
 switch (_that) {
 case _WishItem():
 return $default(_that.id,_that.title,_that.description,_that.categoryId,_that.imagePath,_that.price,_that.url,_that.deadline,_that.tier,_that.isCompleted,_that.isDeleted,_that.createdAt,_that.updatedAt,_that.comments);case _:
@@ -207,7 +207,7 @@ return $default(_that.id,_that.title,_that.description,_that.categoryId,_that.im
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title,  String description,  String? categoryId,  String? imagePath,  double? price,  String? url,  DateTime? deadline,  TierType tier,  bool isCompleted,  bool isDeleted,  DateTime createdAt,  DateTime updatedAt,  List<Comment> comments)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title,  String description,  String? categoryId,  String? imagePath,  double? price,  String? url,  DateTime? deadline,  TierType tier,  bool isCompleted,  bool isDeleted,  DateTime createdAt,  DateTime updatedAt, @JsonKey(fromJson: _commentsFromJson, toJson: _commentsToJson)  List<Comment> comments)?  $default,) {final _that = this;
 switch (_that) {
 case _WishItem() when $default != null:
 return $default(_that.id,_that.title,_that.description,_that.categoryId,_that.imagePath,_that.price,_that.url,_that.deadline,_that.tier,_that.isCompleted,_that.isDeleted,_that.createdAt,_that.updatedAt,_that.comments);case _:
@@ -222,7 +222,7 @@ return $default(_that.id,_that.title,_that.description,_that.categoryId,_that.im
 @JsonSerializable()
 
 class _WishItem implements WishItem {
-  const _WishItem({required this.id, required this.title, this.description = '', this.categoryId, this.imagePath, this.price, this.url, this.deadline, this.tier = TierType.c, this.isCompleted = false, this.isDeleted = false, required this.createdAt, required this.updatedAt, final  List<Comment> comments = const []}): _comments = comments;
+  const _WishItem({required this.id, required this.title, this.description = '', this.categoryId, this.imagePath, this.price, this.url, this.deadline, this.tier = TierType.c, this.isCompleted = false, this.isDeleted = false, required this.createdAt, required this.updatedAt, @JsonKey(fromJson: _commentsFromJson, toJson: _commentsToJson) final  List<Comment> comments = const []}): _comments = comments;
   factory _WishItem.fromJson(Map<String, dynamic> json) => _$WishItemFromJson(json);
 
 @override final  String id;
@@ -239,7 +239,7 @@ class _WishItem implements WishItem {
 @override final  DateTime createdAt;
 @override final  DateTime updatedAt;
  final  List<Comment> _comments;
-@override@JsonKey() List<Comment> get comments {
+@override@JsonKey(fromJson: _commentsFromJson, toJson: _commentsToJson) List<Comment> get comments {
   if (_comments is EqualUnmodifiableListView) return _comments;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_comments);
@@ -279,7 +279,7 @@ abstract mixin class _$WishItemCopyWith<$Res> implements $WishItemCopyWith<$Res>
   factory _$WishItemCopyWith(_WishItem value, $Res Function(_WishItem) _then) = __$WishItemCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String title, String description, String? categoryId, String? imagePath, double? price, String? url, DateTime? deadline, TierType tier, bool isCompleted, bool isDeleted, DateTime createdAt, DateTime updatedAt, List<Comment> comments
+ String id, String title, String description, String? categoryId, String? imagePath, double? price, String? url, DateTime? deadline, TierType tier, bool isCompleted, bool isDeleted, DateTime createdAt, DateTime updatedAt,@JsonKey(fromJson: _commentsFromJson, toJson: _commentsToJson) List<Comment> comments
 });
 
 

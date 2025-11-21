@@ -9,6 +9,7 @@ import 'package:wish_list_tier/presentation/screens/archive_screen.dart';
 import 'package:wish_list_tier/presentation/screens/item_detail_screen.dart';
 import 'package:wish_list_tier/presentation/screens/item_editor_screen.dart';
 import 'package:wish_list_tier/presentation/screens/settings_screen.dart';
+import 'package:wish_list_tier/presentation/screens/upgrade_screen.dart';
 import 'package:wish_list_tier/presentation/viewmodels/tier_list_viewmodel.dart';
 
 class TierListScreen extends ConsumerStatefulWidget {
@@ -52,7 +53,7 @@ class _TierListScreenState extends ConsumerState<TierListScreen>
                 )) {
               _categories = categories;
               _tabController = TabController(
-                length: categories.length,
+                length: categories.length + 1, // +1 for add button tab
                 vsync: this,
               );
             }
@@ -64,39 +65,47 @@ class _TierListScreenState extends ConsumerState<TierListScreen>
                 bottom: TabBar(
                   controller: _tabController,
                   isScrollable: true,
-                  tabs: categories.map((c) => Tab(text: c.name)).toList(),
+                  labelColor: Colors.white,
+                  unselectedLabelColor: Colors.white.withValues(alpha: 0.7),
+                  indicatorColor: Colors.white,
+                  indicatorWeight: 3,
+                  tabs: [
+                    ...categories.map((c) => Tab(text: c.name)),
+                    Tab(
+                      child: IconButton(
+                        icon: const Icon(Icons.add_circle_outline, size: 20),
+                        onPressed: () =>
+                            _showAddCategoryDialog(context, categories),
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                      ),
+                    ),
+                  ],
                 ),
                 actions: [
+                  IconButton(
+                    icon: const Icon(Icons.archive_outlined),
+                    onPressed: () {
+                      final currentCategoryId =
+                          categories[_tabController.index].id;
+                      final currentCategoryName =
+                          categories[_tabController.index].name;
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => ArchiveScreen(
+                            categoryId: currentCategoryId,
+                            categoryName: currentCategoryName,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                   IconButton(
                     icon: const Icon(Icons.settings_outlined),
                     onPressed: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) => const SettingsScreen(),
-                        ),
-                      );
-                    },
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.add_circle_outline),
-                    onPressed: () =>
-                        _showAddCategoryDialog(context, categories),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.delete_outline),
-                    onPressed: () =>
-                        _showDeleteCategoryDialog(context, categories),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.list),
-                    onPressed: () {
-                      final currentCategory = categories[_tabController.index];
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => ArchiveScreen(
-                            categoryId: currentCategory.id,
-                            categoryName: currentCategory.name,
-                          ),
                         ),
                       );
                     },
@@ -157,7 +166,7 @@ class _TierListScreenState extends ConsumerState<TierListScreen>
         context: context,
         builder: (context) => AlertDialog(
           title: const Text('制限に達しました'),
-          content: const Text('カテゴリをさらに作成するには、プレミアムプランへのアップグレードが必要です。'),
+          content: const Text('カテゴリをさらに作成するには、シートの追加が必要です。'),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
@@ -166,9 +175,11 @@ class _TierListScreenState extends ConsumerState<TierListScreen>
             ElevatedButton(
               onPressed: () {
                 Navigator.of(context).pop();
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(const SnackBar(content: Text('購入画面（モック）')));
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const PurchaseScreen(),
+                  ),
+                );
               },
               child: const Text('購入する'),
             ),
@@ -376,63 +387,93 @@ class _ItemCard extends StatelessWidget {
           MaterialPageRoute(builder: (context) => ItemDetailScreen(item: item)),
         );
       },
-      child: Container(
-        width: 80,
-        height: 80,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12.0),
-          boxShadow: isDragging
-              ? []
-              : [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.1),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
+      child: Stack(
+        children: [
+          Container(
+            width: 80,
+            height: 80,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12.0),
+              boxShadow: isDragging
+                  ? []
+                  : [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.1),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+            ),
+            child: Stack(
+              children: [
+                if (item.imagePath != null)
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(12.0),
+                    child: Image.file(
+                      File(item.imagePath!),
+                      fit: BoxFit.cover,
+                      width: 80,
+                      height: 80,
+                    ),
                   ),
-                ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(12.0),
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              if (item.imagePath != null)
-                Image.file(File(item.imagePath!), fit: BoxFit.cover)
-              else
-                Container(
-                  color: Colors.grey[100],
-                  child: const Icon(
-                    Icons.image_not_supported,
-                    color: Colors.grey,
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.black.withValues(alpha: 0.7),
+                      borderRadius: const BorderRadius.only(
+                        bottomLeft: Radius.circular(12.0),
+                        bottomRight: Radius.circular(12.0),
+                      ),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 4.0,
+                      vertical: 2.0,
+                    ),
+                    child: Text(
+                      item.title,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.center,
+                    ),
                   ),
                 ),
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: Container(
-                  color: Colors.black.withValues(alpha: 0.6),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 4.0,
-                    vertical: 2.0,
+              ],
+            ),
+          ),
+          // Comment count badge
+          if (item.comments.isNotEmpty)
+            Positioned(
+              top: 0,
+              right: 0,
+              child: Container(
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: Colors.red,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.white, width: 2),
+                ),
+                constraints: const BoxConstraints(minWidth: 20, minHeight: 20),
+                child: Text(
+                  '${item.comments.length}',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
                   ),
-                  child: Text(
-                    item.title,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    textAlign: TextAlign.center,
-                  ),
+                  textAlign: TextAlign.center,
                 ),
               ),
-            ],
-          ),
-        ),
+            ),
+        ],
       ),
     );
   }
