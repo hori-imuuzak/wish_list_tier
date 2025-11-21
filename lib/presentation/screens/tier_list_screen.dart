@@ -115,24 +115,28 @@ class _TierListScreenState extends ConsumerState<TierListScreen>
               body: SafeArea(
                 child: TabBarView(
                   controller: _tabController,
-                  children: categories.map((category) {
-                    return SingleChildScrollView(
-                      child: Column(
-                        children: TierType.values.map((tier) {
-                          final tierItems = items
-                              .where(
-                                (item) =>
-                                    item.categoryId == category.id &&
-                                    item.tier == tier &&
-                                    !item.isCompleted &&
-                                    !item.isDeleted,
-                              )
-                              .toList();
-                          return TierRow(tier: tier, items: tierItems);
-                        }).toList(),
-                      ),
-                    );
-                  }).toList(),
+                  children: [
+                    ...categories.map((category) {
+                      return SingleChildScrollView(
+                        child: Column(
+                          children: TierType.values.map((tier) {
+                            final tierItems = items
+                                .where(
+                                  (item) =>
+                                      item.categoryId == category.id &&
+                                      item.tier == tier &&
+                                      !item.isCompleted &&
+                                      !item.isDeleted,
+                                )
+                                .toList();
+                            return TierRow(tier: tier, items: tierItems);
+                          }).toList(),
+                        ),
+                      );
+                    }),
+                    // Placeholder for add button tab
+                    const SizedBox.shrink(),
+                  ],
                 ),
               ),
               floatingActionButton: FloatingActionButton(
