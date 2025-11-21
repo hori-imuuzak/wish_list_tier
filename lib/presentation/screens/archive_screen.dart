@@ -5,7 +5,10 @@ import 'package:wish_list_tier/domain/models/wish_item.dart';
 import 'package:wish_list_tier/presentation/viewmodels/tier_list_viewmodel.dart';
 
 class ArchiveScreen extends ConsumerWidget {
-  const ArchiveScreen({super.key});
+  final String? categoryId;
+  final String? categoryName;
+
+  const ArchiveScreen({super.key, this.categoryId, this.categoryName});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -15,7 +18,7 @@ class ArchiveScreen extends ConsumerWidget {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('アーカイブ'),
+          title: Text(categoryName != null ? 'アーカイブ ($categoryName)' : 'アーカイブ'),
           bottom: const TabBar(
             tabs: [
               Tab(text: '完了済み'),
@@ -26,10 +29,14 @@ class ArchiveScreen extends ConsumerWidget {
         body: SafeArea(
           child: itemsAsync.when(
             data: (items) {
-              final completedItems = items
+              final filteredItems = categoryId != null
+                  ? items.where((item) => item.categoryId == categoryId)
+                  : items;
+
+              final completedItems = filteredItems
                   .where((item) => item.isCompleted && !item.isDeleted)
                   .toList();
-              final deletedItems = items
+              final deletedItems = filteredItems
                   .where((item) => item.isDeleted)
                   .toList();
 

@@ -11,6 +11,7 @@ abstract class WishItem with _$WishItem {
     required String id,
     required String title,
     @Default('') String description,
+    String? categoryId,
     String? imagePath,
     double? price,
     String? url,

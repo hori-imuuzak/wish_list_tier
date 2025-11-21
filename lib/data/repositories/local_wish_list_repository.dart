@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:wish_list_tier/domain/models/category.dart';
 import 'package:wish_list_tier/domain/models/tier_type.dart';
 import 'package:wish_list_tier/domain/models/wish_item.dart';
 import 'package:wish_list_tier/domain/repositories/wish_list_repository.dart';
@@ -79,5 +80,39 @@ class LocalWishListRepository implements WishListRepository {
       );
       await _saveItems(items);
     }
+  }
+
+  @override
+  Future<List<Category>> getCategories() async {
+    final jsonString = _prefs.getString('wish_list_categories');
+    if (jsonString == null) {
+      return [];
+    }
+    final List<dynamic> jsonList = jsonDecode(jsonString);
+    return jsonList.map((json) => Category.fromJson(json)).toList();
+  }
+
+  Future<void> _saveCategories(List<Category> categories) async {
+    final jsonString = jsonEncode(categories.map((e) => e.toJson()).toList());
+    await _prefs.setString('wish_list_categories', jsonString);
+  }
+
+  @override
+  Future<void> addCategory(Category category) async {
+    final categories = await getCategories();
+    categories.add(category);
+    await _saveCategories(categories);
+  }
+
+  @override
+  Future<void> deleteCategory(String id) async {
+    final categories = await getCategories();
+    categories.removeWhere((e) => e.id == id);
+    await _saveCategories(categories);
+
+    // Delete associated items
+    final items = await getItems();
+    items.removeWhere((e) => e.categoryId == id);
+    await _saveItems(items);
   }
 }

@@ -1,14 +1,20 @@
-import 'package:wish_list_tier/domain/models/wish_item.dart';
+import 'package:wish_list_tier/domain/models/category.dart';
 import 'package:wish_list_tier/domain/models/tier_type.dart';
+import 'package:wish_list_tier/domain/models/wish_item.dart';
 
 abstract class WishListRepository {
   Future<List<WishItem>> getItems();
   Future<void> addItem(WishItem item);
   Future<void> updateItem(WishItem item);
-
+  Future<void> deleteItem(String id, bool isDeleted); // Soft delete
   Future<void> moveItemToTier(String id, TierType tier);
   Future<void> completeItem(String id, bool isCompleted);
-  Future<void> deleteItem(String id, bool isDeleted); // Soft delete
+
+  // Category methods
+  Future<List<Category>> getCategories();
+  Future<void> addCategory(Category category);
+  Future<void> deleteCategory(String id);
+
   // Future<void> completeItem(String id); // updateItemでTierを変えるか、完了フラグを持つか。今回はTier表の外に移動なら別リスト管理かも。
   // 一旦完了リストへの移動は、TierTypeに完了を含めるか、別のステータスを持つか。
   // 要件: "購入完了したものは完了リストに移動できるようにする"

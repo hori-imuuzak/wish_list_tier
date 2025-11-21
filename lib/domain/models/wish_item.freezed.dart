@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$WishItem {
 
- String get id; String get title; String get description; String? get imagePath; double? get price; String? get url; DateTime? get deadline; TierType get tier; bool get isCompleted; bool get isDeleted; DateTime get createdAt; DateTime get updatedAt; List<Comment> get comments;
+ String get id; String get title; String get description; String? get categoryId; String? get imagePath; double? get price; String? get url; DateTime? get deadline; TierType get tier; bool get isCompleted; bool get isDeleted; DateTime get createdAt; DateTime get updatedAt; List<Comment> get comments;
 /// Create a copy of WishItem
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $WishItemCopyWith<WishItem> get copyWith => _$WishItemCopyWithImpl<WishItem>(thi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is WishItem&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.imagePath, imagePath) || other.imagePath == imagePath)&&(identical(other.price, price) || other.price == price)&&(identical(other.url, url) || other.url == url)&&(identical(other.deadline, deadline) || other.deadline == deadline)&&(identical(other.tier, tier) || other.tier == tier)&&(identical(other.isCompleted, isCompleted) || other.isCompleted == isCompleted)&&(identical(other.isDeleted, isDeleted) || other.isDeleted == isDeleted)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&const DeepCollectionEquality().equals(other.comments, comments));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is WishItem&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.categoryId, categoryId) || other.categoryId == categoryId)&&(identical(other.imagePath, imagePath) || other.imagePath == imagePath)&&(identical(other.price, price) || other.price == price)&&(identical(other.url, url) || other.url == url)&&(identical(other.deadline, deadline) || other.deadline == deadline)&&(identical(other.tier, tier) || other.tier == tier)&&(identical(other.isCompleted, isCompleted) || other.isCompleted == isCompleted)&&(identical(other.isDeleted, isDeleted) || other.isDeleted == isDeleted)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&const DeepCollectionEquality().equals(other.comments, comments));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,title,description,imagePath,price,url,deadline,tier,isCompleted,isDeleted,createdAt,updatedAt,const DeepCollectionEquality().hash(comments));
+int get hashCode => Object.hash(runtimeType,id,title,description,categoryId,imagePath,price,url,deadline,tier,isCompleted,isDeleted,createdAt,updatedAt,const DeepCollectionEquality().hash(comments));
 
 @override
 String toString() {
-  return 'WishItem(id: $id, title: $title, description: $description, imagePath: $imagePath, price: $price, url: $url, deadline: $deadline, tier: $tier, isCompleted: $isCompleted, isDeleted: $isDeleted, createdAt: $createdAt, updatedAt: $updatedAt, comments: $comments)';
+  return 'WishItem(id: $id, title: $title, description: $description, categoryId: $categoryId, imagePath: $imagePath, price: $price, url: $url, deadline: $deadline, tier: $tier, isCompleted: $isCompleted, isDeleted: $isDeleted, createdAt: $createdAt, updatedAt: $updatedAt, comments: $comments)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $WishItemCopyWith<$Res>  {
   factory $WishItemCopyWith(WishItem value, $Res Function(WishItem) _then) = _$WishItemCopyWithImpl;
 @useResult
 $Res call({
- String id, String title, String description, String? imagePath, double? price, String? url, DateTime? deadline, TierType tier, bool isCompleted, bool isDeleted, DateTime createdAt, DateTime updatedAt, List<Comment> comments
+ String id, String title, String description, String? categoryId, String? imagePath, double? price, String? url, DateTime? deadline, TierType tier, bool isCompleted, bool isDeleted, DateTime createdAt, DateTime updatedAt, List<Comment> comments
 });
 
 
@@ -65,12 +65,13 @@ class _$WishItemCopyWithImpl<$Res>
 
 /// Create a copy of WishItem
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? description = null,Object? imagePath = freezed,Object? price = freezed,Object? url = freezed,Object? deadline = freezed,Object? tier = null,Object? isCompleted = null,Object? isDeleted = null,Object? createdAt = null,Object? updatedAt = null,Object? comments = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? description = null,Object? categoryId = freezed,Object? imagePath = freezed,Object? price = freezed,Object? url = freezed,Object? deadline = freezed,Object? tier = null,Object? isCompleted = null,Object? isDeleted = null,Object? createdAt = null,Object? updatedAt = null,Object? comments = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,description: null == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
-as String,imagePath: freezed == imagePath ? _self.imagePath : imagePath // ignore: cast_nullable_to_non_nullable
+as String,categoryId: freezed == categoryId ? _self.categoryId : categoryId // ignore: cast_nullable_to_non_nullable
+as String?,imagePath: freezed == imagePath ? _self.imagePath : imagePath // ignore: cast_nullable_to_non_nullable
 as String?,price: freezed == price ? _self.price : price // ignore: cast_nullable_to_non_nullable
 as double?,url: freezed == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
 as String?,deadline: freezed == deadline ? _self.deadline : deadline // ignore: cast_nullable_to_non_nullable
@@ -165,10 +166,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title,  String description,  String? imagePath,  double? price,  String? url,  DateTime? deadline,  TierType tier,  bool isCompleted,  bool isDeleted,  DateTime createdAt,  DateTime updatedAt,  List<Comment> comments)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title,  String description,  String? categoryId,  String? imagePath,  double? price,  String? url,  DateTime? deadline,  TierType tier,  bool isCompleted,  bool isDeleted,  DateTime createdAt,  DateTime updatedAt,  List<Comment> comments)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _WishItem() when $default != null:
-return $default(_that.id,_that.title,_that.description,_that.imagePath,_that.price,_that.url,_that.deadline,_that.tier,_that.isCompleted,_that.isDeleted,_that.createdAt,_that.updatedAt,_that.comments);case _:
+return $default(_that.id,_that.title,_that.description,_that.categoryId,_that.imagePath,_that.price,_that.url,_that.deadline,_that.tier,_that.isCompleted,_that.isDeleted,_that.createdAt,_that.updatedAt,_that.comments);case _:
   return orElse();
 
 }
@@ -186,10 +187,10 @@ return $default(_that.id,_that.title,_that.description,_that.imagePath,_that.pri
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  String description,  String? imagePath,  double? price,  String? url,  DateTime? deadline,  TierType tier,  bool isCompleted,  bool isDeleted,  DateTime createdAt,  DateTime updatedAt,  List<Comment> comments)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  String description,  String? categoryId,  String? imagePath,  double? price,  String? url,  DateTime? deadline,  TierType tier,  bool isCompleted,  bool isDeleted,  DateTime createdAt,  DateTime updatedAt,  List<Comment> comments)  $default,) {final _that = this;
 switch (_that) {
 case _WishItem():
-return $default(_that.id,_that.title,_that.description,_that.imagePath,_that.price,_that.url,_that.deadline,_that.tier,_that.isCompleted,_that.isDeleted,_that.createdAt,_that.updatedAt,_that.comments);case _:
+return $default(_that.id,_that.title,_that.description,_that.categoryId,_that.imagePath,_that.price,_that.url,_that.deadline,_that.tier,_that.isCompleted,_that.isDeleted,_that.createdAt,_that.updatedAt,_that.comments);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -206,10 +207,10 @@ return $default(_that.id,_that.title,_that.description,_that.imagePath,_that.pri
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title,  String description,  String? imagePath,  double? price,  String? url,  DateTime? deadline,  TierType tier,  bool isCompleted,  bool isDeleted,  DateTime createdAt,  DateTime updatedAt,  List<Comment> comments)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title,  String description,  String? categoryId,  String? imagePath,  double? price,  String? url,  DateTime? deadline,  TierType tier,  bool isCompleted,  bool isDeleted,  DateTime createdAt,  DateTime updatedAt,  List<Comment> comments)?  $default,) {final _that = this;
 switch (_that) {
 case _WishItem() when $default != null:
-return $default(_that.id,_that.title,_that.description,_that.imagePath,_that.price,_that.url,_that.deadline,_that.tier,_that.isCompleted,_that.isDeleted,_that.createdAt,_that.updatedAt,_that.comments);case _:
+return $default(_that.id,_that.title,_that.description,_that.categoryId,_that.imagePath,_that.price,_that.url,_that.deadline,_that.tier,_that.isCompleted,_that.isDeleted,_that.createdAt,_that.updatedAt,_that.comments);case _:
   return null;
 
 }
@@ -221,12 +222,13 @@ return $default(_that.id,_that.title,_that.description,_that.imagePath,_that.pri
 @JsonSerializable()
 
 class _WishItem implements WishItem {
-  const _WishItem({required this.id, required this.title, this.description = '', this.imagePath, this.price, this.url, this.deadline, this.tier = TierType.c, this.isCompleted = false, this.isDeleted = false, required this.createdAt, required this.updatedAt, final  List<Comment> comments = const []}): _comments = comments;
+  const _WishItem({required this.id, required this.title, this.description = '', this.categoryId, this.imagePath, this.price, this.url, this.deadline, this.tier = TierType.c, this.isCompleted = false, this.isDeleted = false, required this.createdAt, required this.updatedAt, final  List<Comment> comments = const []}): _comments = comments;
   factory _WishItem.fromJson(Map<String, dynamic> json) => _$WishItemFromJson(json);
 
 @override final  String id;
 @override final  String title;
 @override@JsonKey() final  String description;
+@override final  String? categoryId;
 @override final  String? imagePath;
 @override final  double? price;
 @override final  String? url;
@@ -257,16 +259,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _WishItem&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.imagePath, imagePath) || other.imagePath == imagePath)&&(identical(other.price, price) || other.price == price)&&(identical(other.url, url) || other.url == url)&&(identical(other.deadline, deadline) || other.deadline == deadline)&&(identical(other.tier, tier) || other.tier == tier)&&(identical(other.isCompleted, isCompleted) || other.isCompleted == isCompleted)&&(identical(other.isDeleted, isDeleted) || other.isDeleted == isDeleted)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&const DeepCollectionEquality().equals(other._comments, _comments));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _WishItem&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.categoryId, categoryId) || other.categoryId == categoryId)&&(identical(other.imagePath, imagePath) || other.imagePath == imagePath)&&(identical(other.price, price) || other.price == price)&&(identical(other.url, url) || other.url == url)&&(identical(other.deadline, deadline) || other.deadline == deadline)&&(identical(other.tier, tier) || other.tier == tier)&&(identical(other.isCompleted, isCompleted) || other.isCompleted == isCompleted)&&(identical(other.isDeleted, isDeleted) || other.isDeleted == isDeleted)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&const DeepCollectionEquality().equals(other._comments, _comments));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,title,description,imagePath,price,url,deadline,tier,isCompleted,isDeleted,createdAt,updatedAt,const DeepCollectionEquality().hash(_comments));
+int get hashCode => Object.hash(runtimeType,id,title,description,categoryId,imagePath,price,url,deadline,tier,isCompleted,isDeleted,createdAt,updatedAt,const DeepCollectionEquality().hash(_comments));
 
 @override
 String toString() {
-  return 'WishItem(id: $id, title: $title, description: $description, imagePath: $imagePath, price: $price, url: $url, deadline: $deadline, tier: $tier, isCompleted: $isCompleted, isDeleted: $isDeleted, createdAt: $createdAt, updatedAt: $updatedAt, comments: $comments)';
+  return 'WishItem(id: $id, title: $title, description: $description, categoryId: $categoryId, imagePath: $imagePath, price: $price, url: $url, deadline: $deadline, tier: $tier, isCompleted: $isCompleted, isDeleted: $isDeleted, createdAt: $createdAt, updatedAt: $updatedAt, comments: $comments)';
 }
 
 
@@ -277,7 +279,7 @@ abstract mixin class _$WishItemCopyWith<$Res> implements $WishItemCopyWith<$Res>
   factory _$WishItemCopyWith(_WishItem value, $Res Function(_WishItem) _then) = __$WishItemCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String title, String description, String? imagePath, double? price, String? url, DateTime? deadline, TierType tier, bool isCompleted, bool isDeleted, DateTime createdAt, DateTime updatedAt, List<Comment> comments
+ String id, String title, String description, String? categoryId, String? imagePath, double? price, String? url, DateTime? deadline, TierType tier, bool isCompleted, bool isDeleted, DateTime createdAt, DateTime updatedAt, List<Comment> comments
 });
 
 
@@ -294,12 +296,13 @@ class __$WishItemCopyWithImpl<$Res>
 
 /// Create a copy of WishItem
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? description = null,Object? imagePath = freezed,Object? price = freezed,Object? url = freezed,Object? deadline = freezed,Object? tier = null,Object? isCompleted = null,Object? isDeleted = null,Object? createdAt = null,Object? updatedAt = null,Object? comments = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? description = null,Object? categoryId = freezed,Object? imagePath = freezed,Object? price = freezed,Object? url = freezed,Object? deadline = freezed,Object? tier = null,Object? isCompleted = null,Object? isDeleted = null,Object? createdAt = null,Object? updatedAt = null,Object? comments = null,}) {
   return _then(_WishItem(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,description: null == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
-as String,imagePath: freezed == imagePath ? _self.imagePath : imagePath // ignore: cast_nullable_to_non_nullable
+as String,categoryId: freezed == categoryId ? _self.categoryId : categoryId // ignore: cast_nullable_to_non_nullable
+as String?,imagePath: freezed == imagePath ? _self.imagePath : imagePath // ignore: cast_nullable_to_non_nullable
 as String?,price: freezed == price ? _self.price : price // ignore: cast_nullable_to_non_nullable
 as double?,url: freezed == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
 as String?,deadline: freezed == deadline ? _self.deadline : deadline // ignore: cast_nullable_to_non_nullable
