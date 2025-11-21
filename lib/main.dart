@@ -5,13 +5,14 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wish_list_tier/data/providers.dart';
 import 'package:wish_list_tier/data/repositories/firebase_wish_list_repository.dart';
+import 'package:wish_list_tier/firebase_options.dart';
 import 'package:wish_list_tier/presentation/screens/tier_list_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Initialize Firebase
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   // Initialize SharedPreferences
   final prefs = await SharedPreferences.getInstance();
@@ -41,14 +42,23 @@ class _MyAppState extends ConsumerState<MyApp> {
   }
 
   Future<void> _initializeFirebase() async {
-    // Initialize Firebase repository (sign in anonymously and migrate data)
-    final repository = ref.read(wishListRepositoryProvider);
-    if (repository is FirebaseWishListRepository) {
-      await repository.initialize();
+    try {
+      // Initialize Firebase repository (sign in anonymously and migrate data)
+      final repository = ref.read(wishListRepositoryProvider);
+      if (repository is FirebaseWishListRepository) {
+        await repository.initialize();
+      }
+    } catch (e) {
+      // Log error but continue - app can still function
+      debugPrint('Firebase initialization error: $e');
+    } finally {
+      // Always set initialized to true to show the app
+      if (mounted) {
+        setState(() {
+          _initialized = true;
+        });
+      }
     }
-    setState(() {
-      _initialized = true;
-    });
   }
 
   @override

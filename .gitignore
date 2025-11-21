@@ -34,6 +34,11 @@ migrate_working_dir/
 .pub/
 /build/
 
+# Firebase configuration (contains API keys)
+# Note: This file is needed for the app to run. Do not commit to version control.
+# Regenerate using: flutterfire configure
+lib/firebase_options.dart
+
 # Symbolication related
 app.*.symbols
 

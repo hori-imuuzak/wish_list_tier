@@ -27,6 +27,5 @@ WishListRepository wishListRepository(Ref ref) {
   return FirebaseWishListRepository(
     auth: ref.watch(firebaseAuthProvider),
     firestore: ref.watch(firebaseFirestoreProvider),
-    prefs: ref.watch(sharedPreferencesProvider),
   );
 }
