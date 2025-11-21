@@ -113,3 +113,5 @@ coverage/
 !**/ios/**/default.perspectivev3
 ios/Runner/GoogleService-Info.plist
 android/app/google-services.json
+
+functions/.env

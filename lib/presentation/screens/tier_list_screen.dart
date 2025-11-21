@@ -218,45 +218,6 @@ class _TierListScreenState extends ConsumerState<TierListScreen>
       ),
     );
   }
-
-  void _showDeleteCategoryDialog(
-    BuildContext context,
-    List<Category> categories,
-  ) {
-    if (categories.isEmpty) return;
-
-    // Can't delete the last category? Or maybe just ensure at least one exists?
-    // Requirement: "Delete category (confirm with user)"
-    // If only 1 category, maybe prevent deletion or recreate default?
-    // Let's assume we can delete any, but if 0 left, migration logic might kick in on next reload.
-    // But better to prevent deleting the last one or currently selected one easily.
-
-    final currentCategory = categories[_tabController.index];
-
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('${currentCategory.name}を削除しますか？'),
-        content: const Text('このカテゴリに含まれるすべてのアイテムも削除されます。この操作は取り消せません。'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('キャンセル'),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            onPressed: () async {
-              await ref
-                  .read(tierListViewModelProvider.notifier)
-                  .deleteCategory(currentCategory.id);
-              if (context.mounted) Navigator.of(context).pop();
-            },
-            child: const Text('削除', style: TextStyle(color: Colors.white)),
-          ),
-        ],
-      ),
-    );
-  }
 }
 
 class TierRow extends ConsumerWidget {
