@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wish_list_tier/data/repositories/firebase_wish_list_repository.dart';
+import 'package:wish_list_tier/data/repositories/iap_repository.dart';
 import 'package:wish_list_tier/domain/repositories/wish_list_repository.dart';
 
 part 'providers.g.dart';
@@ -28,4 +29,9 @@ WishListRepository wishListRepository(Ref ref) {
     auth: ref.watch(firebaseAuthProvider),
     firestore: ref.watch(firebaseFirestoreProvider),
   );
+}
+
+@Riverpod(keepAlive: true)
+IAPRepository iapRepository(Ref ref) {
+  return IAPRepository();
 }

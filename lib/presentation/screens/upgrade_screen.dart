@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:wish_list_tier/data/providers/purchase_provider.dart';
 
 class PurchaseScreen extends ConsumerWidget {
@@ -12,162 +13,179 @@ class PurchaseScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('購入')),
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Current Status
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      const Color(0xFFFFB7B2),
-                      const Color(0xFFFFB7B2).withValues(alpha: 0.7),
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.1),
-                      blurRadius: 8,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
+        child: purchases.isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : SingleChildScrollView(
+                padding: const EdgeInsets.all(16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      '現在の状態',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                    // Current Status
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            const Color(0xFFFFB7B2),
+                            const Color(0xFFFFB7B2).withValues(alpha: 0.7),
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.1),
+                            blurRadius: 8,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            '現在の状態',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.folder_outlined,
+                                color: Colors.white,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                'Tierシート: ${purchases.maxSheets}個まで',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Row(
+                            children: [
+                              Icon(
+                                purchases.isAdFree
+                                    ? Icons.check_circle
+                                    : Icons.ads_click,
+                                color: Colors.white,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                purchases.isAdFree ? '広告なし' : '広告あり',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
-                    const SizedBox(height: 12),
-                    Row(
-                      children: [
-                        const Icon(Icons.folder_outlined, color: Colors.white),
-                        const SizedBox(width: 8),
-                        Text(
-                          'Tierシート: ${purchases.maxSheets}個まで',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
+
+                    const SizedBox(height: 32),
+
+                    if (!purchases.isStoreAvailable)
+                      const Center(
+                        child: Text(
+                          'ストアに接続できません',
+                          style: TextStyle(color: Colors.red),
+                        ),
+                      )
+                    else ...[
+                      const Text(
+                        '購入可能なアイテム',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      // Additional Sheets Purchase
+                      _buildPurchaseCard(
+                        context: context,
+                        icon: Icons.add_circle_outline,
+                        title: 'Tierシート追加',
+                        description: 'Tierシートを追加で作成できます',
+                        options: [
+                          _buildOption(ref, purchases, 'tier_sheet_5', '+5シート'),
+                          _buildOption(
+                            ref,
+                            purchases,
+                            'tier_sheet_10',
+                            '+10シート',
                           ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Icon(
-                          purchases.isAdFree
-                              ? Icons.check_circle
-                              : Icons.ads_click,
-                          color: Colors.white,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          purchases.isAdFree ? '広告なし' : '広告あり',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
+                        ],
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      // Ad-Free Purchase
+                      _buildPurchaseCard(
+                        context: context,
+                        icon: Icons.block,
+                        title: '広告削除',
+                        description: 'すべての広告を非表示にします',
+                        options: [
+                          _buildOption(
+                            ref,
+                            purchases,
+                            'ad_free',
+                            purchases.isAdFree ? '購入済み' : '広告を削除',
+                            isPurchased: purchases.isAdFree,
                           ),
-                        ),
-                      ],
-                    ),
+                        ],
+                      ),
+                    ],
                   ],
                 ),
               ),
-
-              const SizedBox(height: 32),
-
-              const Text(
-                '購入可能なアイテム',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-
-              const SizedBox(height: 16),
-
-              // Additional Sheets Purchase
-              _buildPurchaseCard(
-                context: context,
-                icon: Icons.add_circle_outline,
-                title: 'Tierシート追加',
-                description: 'Tierシートを追加で作成できます',
-                options: [
-                  _PurchaseOption(
-                    label: '+5シート',
-                    price: '¥120',
-                    onTap: () => _showPurchaseDialog(
-                      context,
-                      ref,
-                      'Tierシート +5',
-                      () => ref
-                          .read(purchasesProvider.notifier)
-                          .purchaseAdditionalSheets(5),
-                    ),
-                  ),
-                  _PurchaseOption(
-                    label: '+10シート',
-                    price: '¥240',
-                    onTap: () => _showPurchaseDialog(
-                      context,
-                      ref,
-                      'Tierシート +10',
-                      () => ref
-                          .read(purchasesProvider.notifier)
-                          .purchaseAdditionalSheets(10),
-                    ),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 16),
-
-              // Ad-Free Purchase
-              _buildPurchaseCard(
-                context: context,
-                icon: Icons.block,
-                title: '広告削除',
-                description: 'すべての広告を非表示にします',
-                options: [
-                  _PurchaseOption(
-                    label: purchases.isAdFree ? '購入済み' : '広告を削除',
-                    price: purchases.isAdFree ? '' : '¥370',
-                    onTap: purchases.isAdFree
-                        ? null
-                        : () => _showPurchaseDialog(
-                            context,
-                            ref,
-                            '広告削除',
-                            () => ref
-                                .read(purchasesProvider.notifier)
-                                .purchaseAdFree(),
-                          ),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 32),
-
-              Center(
-                child: Text(
-                  '※ これはモック画面です',
-                  style: TextStyle(color: Colors.grey[600], fontSize: 12),
-                ),
-              ),
-            ],
-          ),
-        ),
       ),
+    );
+  }
+
+  _PurchaseOption _buildOption(
+    WidgetRef ref,
+    PurchaseState purchases,
+    String productId,
+    String label, {
+    bool isPurchased = false,
+  }) {
+    final product = purchases.availableProducts.firstWhere(
+      (p) => p.id == productId,
+      orElse: () => MockProductDetails(
+        id: productId,
+        title: 'Unknown',
+        description: '',
+        price: '',
+        rawPrice: 0,
+        currencyCode: '',
+      ),
+    );
+
+    // If product is not found (mock), disable it or show placeholder
+    // But now we support mock products in provider, so we can enable it if it's a MockProductDetails
+    // The only case to disable is if it's truly unknown/empty
+    final isUnknown = product.title == 'Unknown';
+
+    return _PurchaseOption(
+      label: label,
+      price: isPurchased ? '' : (isUnknown ? '---' : product.price),
+      onTap: (isPurchased || isUnknown)
+          ? null
+          : () => _showPurchaseDialog(ref.context, ref, product),
     );
   }
 
@@ -274,16 +292,13 @@ class PurchaseScreen extends ConsumerWidget {
   void _showPurchaseDialog(
     BuildContext context,
     WidgetRef ref,
-    String itemName,
-    VoidCallback onPurchase,
+    ProductDetails product,
   ) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('購入確認'),
-        content: Text(
-          'これはモック画面です。実際のアプリでは、ここで決済処理が行われます。\n\n「$itemName」を購入しますか？',
-        ),
+        content: Text('「${product.title}」を購入しますか？\n価格: ${product.price}'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
@@ -291,11 +306,8 @@ class PurchaseScreen extends ConsumerWidget {
           ),
           ElevatedButton(
             onPressed: () {
-              onPurchase();
               Navigator.of(context).pop();
-              ScaffoldMessenger.of(
-                context,
-              ).showSnackBar(SnackBar(content: Text('$itemNameを購入しました！')));
+              ref.read(purchasesProvider.notifier).buyProduct(product);
             },
             child: const Text('購入'),
           ),
