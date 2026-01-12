@@ -6,7 +6,7 @@ part 'contact_viewmodel.g.dart';
 
 @riverpod
 class ContactViewModel extends _$ContactViewModel {
-  late final SendInquiryUseCase _sendInquiryUseCase;
+  late SendInquiryUseCase _sendInquiryUseCase;
 
   @override
   ContactState build() {

@@ -8,7 +8,7 @@ part 'archive_viewmodel.g.dart';
 
 @riverpod
 class ArchiveViewModel extends _$ArchiveViewModel {
-  late final DeleteItemUseCase _deleteItemUseCase;
+  late DeleteItemUseCase _deleteItemUseCase;
 
   @override
   Future<ArchiveState> build(String? categoryId) async {

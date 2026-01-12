@@ -11,8 +11,8 @@ part 'item_editor_viewmodel.g.dart';
 
 @riverpod
 class ItemEditorViewModel extends _$ItemEditorViewModel {
-  late final AddItemUseCase _addItemUseCase;
-  late final UpdateItemUseCase _updateItemUseCase;
+  late AddItemUseCase _addItemUseCase;
+  late UpdateItemUseCase _updateItemUseCase;
 
   @override
   void build() {

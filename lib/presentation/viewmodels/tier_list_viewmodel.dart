@@ -18,15 +18,15 @@ part 'tier_list_viewmodel.g.dart';
 
 @riverpod
 class TierListViewModel extends _$TierListViewModel {
-  late final GetItemsUseCase _getItemsUseCase;
-  late final GetCategoriesUseCase _getCategoriesUseCase;
-  late final AddCategoryUseCase _addCategoryUseCase;
-  late final DeleteCategoryUseCase _deleteCategoryUseCase;
-  late final AddItemUseCase _addItemUseCase;
-  late final UpdateItemUseCase _updateItemUseCase;
-  late final DeleteItemUseCase _deleteItemUseCase;
-  late final MoveItemToTierUseCase _moveItemToTierUseCase;
-  late final CompleteItemUseCase _completeItemUseCase;
+  late GetItemsUseCase _getItemsUseCase;
+  late GetCategoriesUseCase _getCategoriesUseCase;
+  late AddCategoryUseCase _addCategoryUseCase;
+  late DeleteCategoryUseCase _deleteCategoryUseCase;
+  late AddItemUseCase _addItemUseCase;
+  late UpdateItemUseCase _updateItemUseCase;
+  late DeleteItemUseCase _deleteItemUseCase;
+  late MoveItemToTierUseCase _moveItemToTierUseCase;
+  late CompleteItemUseCase _completeItemUseCase;
 
   @override
   Future<List<WishItem>> build() async {

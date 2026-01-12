@@ -13,9 +13,9 @@ part 'item_detail_viewmodel.g.dart';
 
 @riverpod
 class ItemDetailViewModel extends _$ItemDetailViewModel {
-  late final UpdateItemUseCase _updateItemUseCase;
-  late final CompleteItemUseCase _completeItemUseCase;
-  late final DeleteItemUseCase _deleteItemUseCase;
+  late UpdateItemUseCase _updateItemUseCase;
+  late CompleteItemUseCase _completeItemUseCase;
+  late DeleteItemUseCase _deleteItemUseCase;
 
   @override
   WishItem? build(String itemId) {
