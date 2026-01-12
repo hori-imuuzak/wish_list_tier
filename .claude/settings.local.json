@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(tree:*)",
+      "Bash(find:*)",
+      "Bash(mkdir:*)",
+      "Bash(dart run build_runner build:*)",
+      "Bash(flutter pub run build_runner build:*)",
+      "Bash(/opt/homebrew/bin/fvm flutter pub run build_runner build:*)",
+      "Bash(/opt/homebrew/bin/fvm flutter analyze:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

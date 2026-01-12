@@ -51,6 +51,7 @@ dependencies:
   firebase_auth: ^5.3.3
   cloud_firestore: ^5.5.2
   in_app_purchase: ^3.2.3
+  in_app_purchase_storekit: ^0.4.7
 
 dev_dependencies:
   flutter_test:

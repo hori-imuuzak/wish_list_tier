@@ -19,6 +19,7 @@
         "http",
         "image_picker",
         "in_app_purchase",
+        "in_app_purchase_storekit",
         "intl",
         "json_annotation",
         "path_provider",
@@ -158,6 +159,16 @@
         "stream_channel",
         "test_api",
         "vector_math"
+      ]
+    },
+    {
+      "name": "in_app_purchase_storekit",
+      "version": "0.4.7",
+      "dependencies": [
+        "collection",
+        "flutter",
+        "in_app_purchase_platform_interface",
+        "json_annotation"
       ]
     },
     {
@@ -797,16 +808,6 @@
         "stream_channel",
         "string_scanner",
         "term_glyph"
-      ]
-    },
-    {
-      "name": "in_app_purchase_storekit",
-      "version": "0.4.6+2",
-      "dependencies": [
-        "collection",
-        "flutter",
-        "in_app_purchase_platform_interface",
-        "json_annotation"
       ]
     },
     {

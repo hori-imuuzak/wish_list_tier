@@ -1,10 +1,9 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:wish_list_tier/data/providers.dart';
 import 'package:uuid/uuid.dart';
 import 'package:wish_list_tier/domain/models/category.dart';
 import 'package:wish_list_tier/domain/models/tier_type.dart';
 import 'package:wish_list_tier/domain/models/wish_item.dart';
-import 'package:wish_list_tier/domain/repositories/wish_list_repository.dart';
+import 'package:wish_list_tier/domain/usecases/providers.dart';
 
 part 'tier_list_viewmodel.g.dart';
 
@@ -12,14 +11,13 @@ part 'tier_list_viewmodel.g.dart';
 class TierListViewModel extends _$TierListViewModel {
   @override
   Future<List<WishItem>> build() async {
-    final repository = ref.watch(wishListRepositoryProvider);
-    // Ensure categories are loaded and migration happens if needed
-    await _ensureCategories(repository);
-    return repository.getItems();
-  }
+    final getItems = ref.watch(getItemsUseCaseProvider);
+    final getCategories = ref.watch(getCategoriesUseCaseProvider);
+    final addCategory = ref.read(addCategoryUseCaseProvider);
+    final updateItem = ref.read(updateItemUseCaseProvider);
 
-  Future<void> _ensureCategories(WishListRepository repository) async {
-    final categories = await repository.getCategories();
+    // Ensure categories are loaded and migration happens if needed
+    final categories = await getCategories();
     if (categories.isEmpty) {
       // Migration: Create default category and assign existing items
       final defaultCategory = Category(
@@ -27,61 +25,61 @@ class TierListViewModel extends _$TierListViewModel {
         name: 'メイン',
         createdAt: DateTime.now(),
       );
-      await repository.addCategory(defaultCategory);
+      await addCategory(defaultCategory);
 
-      final items = await repository.getItems();
+      final items = await getItems();
       for (final item in items) {
         if (item.categoryId == null) {
-          await repository.updateItem(
-            item.copyWith(categoryId: defaultCategory.id),
-          );
+          await updateItem(item.copyWith(categoryId: defaultCategory.id));
         }
       }
     }
+
+    return getItems();
   }
 
   Future<List<Category>> getCategories() async {
-    final repository = ref.read(wishListRepositoryProvider);
-    return repository.getCategories();
+    final getCategories = ref.read(getCategoriesUseCaseProvider);
+    return getCategories();
   }
 
   Future<void> addCategory(String name) async {
-    final repository = ref.read(wishListRepositoryProvider);
+    final addCategory = ref.read(addCategoryUseCaseProvider);
     final category = Category(
       id: const Uuid().v4(),
       name: name,
       createdAt: DateTime.now(),
     );
-    await repository.addCategory(category);
+    await addCategory(category);
     ref.invalidateSelf();
   }
 
   Future<void> deleteCategory(String id) async {
-    final repository = ref.read(wishListRepositoryProvider);
-    await repository.deleteCategory(id);
+    final deleteCategory = ref.read(deleteCategoryUseCaseProvider);
+    await deleteCategory(id);
     ref.invalidateSelf();
   }
 
   Future<void> addItem(WishItem item) async {
-    final repository = ref.read(wishListRepositoryProvider);
-    await repository.addItem(item);
+    final addItem = ref.read(addItemUseCaseProvider);
+    await addItem(item);
     ref.invalidateSelf();
   }
 
   Future<void> updateItem(WishItem item) async {
-    final repository = ref.read(wishListRepositoryProvider);
-    await repository.updateItem(item);
+    final updateItem = ref.read(updateItemUseCaseProvider);
+    await updateItem(item);
     ref.invalidateSelf();
   }
 
   Future<void> deleteItem(String id, {bool isDeleted = true}) async {
-    final repository = ref.read(wishListRepositoryProvider);
-    await repository.deleteItem(id, isDeleted);
+    final deleteItem = ref.read(deleteItemUseCaseProvider);
+    await deleteItem(id, isDeleted: isDeleted);
     ref.invalidateSelf();
   }
 
   Future<void> moveItemToTier(String id, TierType tier) async {
-    final repository = ref.read(wishListRepositoryProvider);
+    final moveItemToTier = ref.read(moveItemToTierUseCaseProvider);
     // Optimistic update: update UI immediately
     final currentItems = state.value ?? [];
     final itemIndex = currentItems.indexWhere((item) => item.id == id);
@@ -97,7 +95,7 @@ class TierListViewModel extends _$TierListViewModel {
 
       // Then update repository in background
       try {
-        await repository.moveItemToTier(id, tier);
+        await moveItemToTier(id, tier);
       } catch (e) {
         // If error, revert to previous state
         state = AsyncValue.data(currentItems);
@@ -107,8 +105,8 @@ class TierListViewModel extends _$TierListViewModel {
   }
 
   Future<void> completeItem(String id) async {
-    final repository = ref.read(wishListRepositoryProvider);
-    await repository.completeItem(id, true);
+    final completeItem = ref.read(completeItemUseCaseProvider);
+    await completeItem(id);
     ref.invalidateSelf();
   }
 }

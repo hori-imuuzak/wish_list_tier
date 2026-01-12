@@ -4,7 +4,11 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
-import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
+import 'package:in_app_purchase_storekit/store_kit_wrappers.dart'
+    show
+        SKPaymentQueueDelegateWrapper,
+        SKPaymentTransactionWrapper,
+        SKStorefrontWrapper;
 
 class IAPRepository {
   final InAppPurchase _iap = InAppPurchase.instance;
