@@ -5,10 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:uuid/uuid.dart';
 import 'package:wish_list_tier/domain/models/tier_type.dart';
 import 'package:wish_list_tier/domain/models/wish_item.dart';
-import 'package:wish_list_tier/presentation/viewmodels/tier_list_viewmodel.dart';
+import 'package:wish_list_tier/presentation/viewmodels/item_editor_viewmodel.dart';
 
 class ItemEditorScreen extends ConsumerStatefulWidget {
   final WishItem? item;
@@ -67,38 +66,32 @@ class _ItemEditorScreenState extends ConsumerState<ItemEditorScreen> {
       final title = _titleController.text;
       final description = _descriptionController.text;
       final price = double.tryParse(_priceController.text);
-      final url = _urlController.text;
+      final url = _urlController.text.isNotEmpty ? _urlController.text : null;
 
-      final now = DateTime.now();
+      final viewModel = ref.read(itemEditorViewModelProvider.notifier);
+
       if (widget.item == null) {
-        final newItem = WishItem(
-          id: const Uuid().v4(),
-          title: _titleController.text,
-          description: _descriptionController.text,
+        await viewModel.createItem(
+          title: title,
+          description: description,
           categoryId: widget.initialCategoryId,
           imagePath: _imagePath,
           price: price,
-          url: _urlController.text,
+          url: url,
           deadline: _deadline,
           tier: _selectedTier,
-          createdAt: DateTime.now(),
-          updatedAt: DateTime.now(),
         );
-        await ref.read(tierListViewModelProvider.notifier).addItem(newItem);
       } else {
-        final updatedItem = widget.item!.copyWith(
+        await viewModel.updateItem(
+          originalItem: widget.item!,
           title: title,
           description: description,
+          imagePath: _imagePath,
           price: price,
           url: url,
           deadline: _deadline,
-          imagePath: _imagePath,
           tier: _selectedTier,
-          updatedAt: now,
         );
-        await ref
-            .read(tierListViewModelProvider.notifier)
-            .updateItem(updatedItem);
       }
 
       if (mounted) {

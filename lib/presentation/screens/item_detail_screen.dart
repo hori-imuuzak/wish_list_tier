@@ -3,13 +3,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:uuid/uuid.dart';
-import 'package:wish_list_tier/domain/models/comment.dart';
 import 'package:wish_list_tier/domain/models/tier_type.dart';
 import 'package:wish_list_tier/domain/models/wish_item.dart';
 import 'package:wish_list_tier/presentation/screens/item_editor_screen.dart';
-import 'package:wish_list_tier/presentation/viewmodels/tier_list_viewmodel.dart';
+import 'package:wish_list_tier/presentation/viewmodels/item_detail_viewmodel.dart';
 
 class ItemDetailScreen extends ConsumerWidget {
   final WishItem item;
@@ -18,14 +15,7 @@ class ItemDetailScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Watch the specific item from the list to get updates
-    final itemsAsync = ref.watch(tierListViewModelProvider);
-    final currentItem =
-        itemsAsync.value?.firstWhere(
-          (element) => element.id == item.id,
-          orElse: () => item,
-        ) ??
-        item;
+    final currentItem = ref.watch(itemDetailViewModelProvider(item.id)) ?? item;
 
     return Scaffold(
       appBar: AppBar(
@@ -140,10 +130,9 @@ class ItemDetailScreen extends ConsumerWidget {
               if (currentItem.url != null && currentItem.url!.isNotEmpty)
                 InkWell(
                   onTap: () async {
-                    final uri = Uri.parse(currentItem.url!);
-                    if (await canLaunchUrl(uri)) {
-                      await launchUrl(uri);
-                    }
+                    await ref
+                        .read(itemDetailViewModelProvider(item.id).notifier)
+                        .launchItemUrl();
                   },
                   child: Row(
                     children: [
@@ -170,8 +159,8 @@ class ItemDetailScreen extends ConsumerWidget {
                     child: ElevatedButton.icon(
                       onPressed: () async {
                         await ref
-                            .read(tierListViewModelProvider.notifier)
-                            .completeItem(currentItem.id);
+                            .read(itemDetailViewModelProvider(item.id).notifier)
+                            .completeItem();
                         if (context.mounted) Navigator.of(context).pop();
                       },
                       icon: const Icon(Icons.check_circle_outline),
@@ -211,8 +200,8 @@ class ItemDetailScreen extends ConsumerWidget {
                         );
                         if (confirm == true) {
                           await ref
-                              .read(tierListViewModelProvider.notifier)
-                              .deleteItem(currentItem.id);
+                              .read(itemDetailViewModelProvider(item.id).notifier)
+                              .deleteItem();
                           if (context.mounted) Navigator.of(context).pop();
                         }
                       },
@@ -249,7 +238,7 @@ class ItemDetailScreen extends ConsumerWidget {
                 ),
               ),
               const SizedBox(height: 8),
-              _AddCommentWidget(itemId: currentItem.id),
+              _AddCommentWidget(itemId: item.id),
               const SizedBox(height: 32),
             ],
           ),
@@ -302,28 +291,9 @@ class _AddCommentWidgetState extends ConsumerState<_AddCommentWidget> {
 
   Future<void> _addComment() async {
     if (_controller.text.isNotEmpty) {
-      final comment = Comment(
-        id: const Uuid().v4(),
-        content: _controller.text,
-        createdAt: DateTime.now(),
-      );
-
-      // Since we don't have a direct addComment method in ViewModel yet, we need to update the item.
-      // But ViewModel only exposes updateItem.
-      // Let's fetch the item, add comment, and update.
-      // Or better, add addComment to ViewModel.
-      // For now, I'll implement it here by reading the current item.
-
-      final items = await ref.read(tierListViewModelProvider.future);
-      final item = items.firstWhere((e) => e.id == widget.itemId);
-      final updatedItem = item.copyWith(
-        comments: [...item.comments, comment],
-        updatedAt: DateTime.now(),
-      );
-
       await ref
-          .read(tierListViewModelProvider.notifier)
-          .updateItem(updatedItem);
+          .read(itemDetailViewModelProvider(widget.itemId).notifier)
+          .addComment(_controller.text);
       _controller.clear();
     }
   }

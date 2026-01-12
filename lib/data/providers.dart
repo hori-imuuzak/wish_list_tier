@@ -4,6 +4,8 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wish_list_tier/data/repositories/firebase_wish_list_repository.dart';
 import 'package:wish_list_tier/data/repositories/iap_repository.dart';
+import 'package:wish_list_tier/data/repositories/inquiry_repository_impl.dart';
+import 'package:wish_list_tier/domain/repositories/inquiry_repository.dart';
 import 'package:wish_list_tier/domain/repositories/wish_list_repository.dart';
 
 part 'providers.g.dart';
@@ -34,4 +36,16 @@ WishListRepository wishListRepository(Ref ref) {
 @Riverpod(keepAlive: true)
 IAPRepository iapRepository(Ref ref) {
   return IAPRepository();
+}
+
+const _slackWebhookUrl =
+    'https://hooks.slack.com/services/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';
+
+@Riverpod(keepAlive: true)
+InquiryRepository inquiryRepository(Ref ref) {
+  return InquiryRepositoryImpl(
+    auth: ref.watch(firebaseAuthProvider),
+    firestore: ref.watch(firebaseFirestoreProvider),
+    slackWebhookUrl: _slackWebhookUrl,
+  );
 }

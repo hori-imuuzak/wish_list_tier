@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:wish_list_tier/domain/models/wish_item.dart';
-import 'package:wish_list_tier/presentation/viewmodels/tier_list_viewmodel.dart';
+import 'package:wish_list_tier/presentation/viewmodels/archive_viewmodel.dart';
 
 class ArchiveScreen extends ConsumerWidget {
   final String? categoryId;
@@ -12,7 +12,7 @@ class ArchiveScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final itemsAsync = ref.watch(tierListViewModelProvider);
+    final archiveAsync = ref.watch(archiveViewModelProvider(categoryId));
 
     return DefaultTabController(
       length: 2,
@@ -27,23 +27,20 @@ class ArchiveScreen extends ConsumerWidget {
           ),
         ),
         body: SafeArea(
-          child: itemsAsync.when(
-            data: (items) {
-              final filteredItems = categoryId != null
-                  ? items.where((item) => item.categoryId == categoryId)
-                  : items;
-
-              final completedItems = filteredItems
-                  .where((item) => item.isCompleted && !item.isDeleted)
-                  .toList();
-              final deletedItems = filteredItems
-                  .where((item) => item.isDeleted)
-                  .toList();
-
+          child: archiveAsync.when(
+            data: (archiveState) {
               return TabBarView(
                 children: [
-                  _ItemList(items: completedItems, isDeletedList: false),
-                  _ItemList(items: deletedItems, isDeletedList: true),
+                  _ItemList(
+                    items: archiveState.completedItems,
+                    isDeletedList: false,
+                    categoryId: categoryId,
+                  ),
+                  _ItemList(
+                    items: archiveState.deletedItems,
+                    isDeletedList: true,
+                    categoryId: categoryId,
+                  ),
                 ],
               );
             },
@@ -59,8 +56,13 @@ class ArchiveScreen extends ConsumerWidget {
 class _ItemList extends ConsumerWidget {
   final List<WishItem> items;
   final bool isDeletedList;
+  final String? categoryId;
 
-  const _ItemList({required this.items, required this.isDeletedList});
+  const _ItemList({
+    required this.items,
+    required this.isDeletedList,
+    required this.categoryId,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -87,8 +89,8 @@ class _ItemList extends ConsumerWidget {
                   icon: const Icon(Icons.restore),
                   onPressed: () async {
                     await ref
-                        .read(tierListViewModelProvider.notifier)
-                        .deleteItem(item.id, isDeleted: false);
+                        .read(archiveViewModelProvider(categoryId).notifier)
+                        .restoreItem(item.id);
                   },
                 )
               : null,

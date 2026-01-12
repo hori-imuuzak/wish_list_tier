@@ -1,9 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:wish_list_tier/presentation/viewmodels/contact_viewmodel.dart';
 
 class ContactScreen extends ConsumerStatefulWidget {
   const ContactScreen({super.key});
@@ -31,58 +28,31 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
       return;
     }
 
-    try {
-      final user = FirebaseAuth.instance.currentUser;
-      if (user == null) {
-        throw Exception('User not authenticated');
-      }
+    final success = await ref.read(contactViewModelProvider.notifier).sendInquiry(
+      title: _subjectController.text,
+      body: _bodyController.text,
+      email: _emailController.text.isNotEmpty ? _emailController.text : null,
+    );
 
-      // Save to Firestore
-      await FirebaseFirestore.instance.collection('inquiries').add({
-        'uid': user.uid,
-        'title': _subjectController.text,
-        'body': _bodyController.text,
-        'email': _emailController.text.isNotEmpty ? _emailController.text : null,
-        'createdAt': FieldValue.serverTimestamp(),
-      });
-
-      // Directly post to Slack webhook
-      const webhookUrl =
-          'https://hooks.slack.com/services/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';
-      final emailInfo = _emailController.text.isNotEmpty
-          ? '*連絡先*: ${_emailController.text}\n'
-          : '';
-      final payload = {
-        'text':
-            '*新しいお問い合わせがありました*\n'
-            '*uid*: ${user.uid}\n'
-            '$emailInfo'
-            '*件名*: ${_subjectController.text}\n'
-            '*内容*: ${_bodyController.text}',
-      };
-      await http.post(
-        Uri.parse(webhookUrl),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode(payload),
-      );
-
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('送信しました')));
+    if (mounted) {
+      if (success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('送信しました')),
+        );
         Navigator.of(context).pop();
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('送信に失敗しました: $e')));
+      } else {
+        final error = ref.read(contactViewModelProvider).error;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('送信に失敗しました: $error')),
+        );
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final contactState = ref.watch(contactViewModelProvider);
+
     return Scaffold(
       appBar: AppBar(title: const Text('問い合わせ')),
       body: SafeArea(
@@ -190,7 +160,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: _sendInquiry,
+                  onPressed: contactState.isLoading ? null : _sendInquiry,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFFFB7B2),
                     foregroundColor: Colors.white,
@@ -199,10 +169,19 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: const Text(
-                    '送信',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
+                  child: contactState.isLoading
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                          ),
+                        )
+                      : const Text(
+                          '送信',
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
                 ),
               ),
             ],

@@ -13,6 +13,7 @@ import 'package:wish_list_tier/domain/usecases/command/move_item_to_tier_usecase
 import 'package:wish_list_tier/domain/usecases/command/complete_item_usecase.dart';
 import 'package:wish_list_tier/domain/usecases/command/add_category_usecase.dart';
 import 'package:wish_list_tier/domain/usecases/command/delete_category_usecase.dart';
+import 'package:wish_list_tier/domain/usecases/command/send_inquiry_usecase.dart';
 
 part 'providers.g.dart';
 
@@ -61,4 +62,9 @@ AddCategoryUseCase addCategoryUseCase(Ref ref) {
 @riverpod
 DeleteCategoryUseCase deleteCategoryUseCase(Ref ref) {
   return DeleteCategoryUseCase(ref.watch(wishListRepositoryProvider));
+}
+
+@riverpod
+SendInquiryUseCase sendInquiryUseCase(Ref ref) {
+  return SendInquiryUseCase(ref.watch(inquiryRepositoryProvider));
 }
