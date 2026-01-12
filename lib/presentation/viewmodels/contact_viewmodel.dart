@@ -1,12 +1,16 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:wish_list_tier/domain/usecases/command/send_inquiry_usecase.dart';
 import 'package:wish_list_tier/domain/usecases/providers.dart';
 
 part 'contact_viewmodel.g.dart';
 
 @riverpod
 class ContactViewModel extends _$ContactViewModel {
+  late final SendInquiryUseCase _sendInquiryUseCase;
+
   @override
   ContactState build() {
+    _sendInquiryUseCase = ref.read(sendInquiryUseCaseProvider);
     return const ContactState();
   }
 
@@ -15,14 +19,16 @@ class ContactViewModel extends _$ContactViewModel {
     required String body,
     String? email,
   }) async {
+    if (!ref.mounted) return false;
     state = state.copyWith(isLoading: true, error: null);
 
-    final sendInquiry = ref.read(sendInquiryUseCaseProvider);
-    final result = await sendInquiry(
+    final result = await _sendInquiryUseCase(
       title: title,
       body: body,
       email: email,
     );
+
+    if (!ref.mounted) return false;
 
     return result.when(
       success: (_) {

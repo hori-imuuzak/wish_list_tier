@@ -3,6 +3,9 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:uuid/uuid.dart';
 import 'package:wish_list_tier/domain/models/comment.dart';
 import 'package:wish_list_tier/domain/models/wish_item.dart';
+import 'package:wish_list_tier/domain/usecases/command/complete_item_usecase.dart';
+import 'package:wish_list_tier/domain/usecases/command/delete_item_usecase.dart';
+import 'package:wish_list_tier/domain/usecases/command/update_item_usecase.dart';
 import 'package:wish_list_tier/domain/usecases/providers.dart';
 import 'package:wish_list_tier/presentation/viewmodels/tier_list_viewmodel.dart';
 
@@ -10,8 +13,16 @@ part 'item_detail_viewmodel.g.dart';
 
 @riverpod
 class ItemDetailViewModel extends _$ItemDetailViewModel {
+  late final UpdateItemUseCase _updateItemUseCase;
+  late final CompleteItemUseCase _completeItemUseCase;
+  late final DeleteItemUseCase _deleteItemUseCase;
+
   @override
   WishItem? build(String itemId) {
+    _updateItemUseCase = ref.read(updateItemUseCaseProvider);
+    _completeItemUseCase = ref.read(completeItemUseCaseProvider);
+    _deleteItemUseCase = ref.read(deleteItemUseCaseProvider);
+
     final itemsAsync = ref.watch(tierListViewModelProvider);
     return itemsAsync.value?.firstWhere(
       (element) => element.id == itemId,
@@ -36,9 +47,8 @@ class ItemDetailViewModel extends _$ItemDetailViewModel {
       updatedAt: DateTime.now(),
     );
 
-    final updateItem = ref.read(updateItemUseCaseProvider);
-    final result = await updateItem(updatedItem);
-    if (result.isSuccess) {
+    final result = await _updateItemUseCase(updatedItem);
+    if (result.isSuccess && ref.mounted) {
       ref.invalidate(tierListViewModelProvider);
     }
   }
@@ -47,9 +57,8 @@ class ItemDetailViewModel extends _$ItemDetailViewModel {
     final currentItem = state;
     if (currentItem == null) return;
 
-    final completeItem = ref.read(completeItemUseCaseProvider);
-    final result = await completeItem(currentItem.id);
-    if (result.isSuccess) {
+    final result = await _completeItemUseCase(currentItem.id);
+    if (result.isSuccess && ref.mounted) {
       ref.invalidate(tierListViewModelProvider);
     }
   }
@@ -58,9 +67,8 @@ class ItemDetailViewModel extends _$ItemDetailViewModel {
     final currentItem = state;
     if (currentItem == null) return;
 
-    final deleteItem = ref.read(deleteItemUseCaseProvider);
-    final result = await deleteItem(currentItem.id);
-    if (result.isSuccess) {
+    final result = await _deleteItemUseCase(currentItem.id);
+    if (result.isSuccess && ref.mounted) {
       ref.invalidate(tierListViewModelProvider);
     }
   }

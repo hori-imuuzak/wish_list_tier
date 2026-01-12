@@ -1,5 +1,6 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:wish_list_tier/domain/models/wish_item.dart';
+import 'package:wish_list_tier/domain/usecases/command/delete_item_usecase.dart';
 import 'package:wish_list_tier/domain/usecases/providers.dart';
 import 'package:wish_list_tier/presentation/viewmodels/tier_list_viewmodel.dart';
 
@@ -7,8 +8,12 @@ part 'archive_viewmodel.g.dart';
 
 @riverpod
 class ArchiveViewModel extends _$ArchiveViewModel {
+  late final DeleteItemUseCase _deleteItemUseCase;
+
   @override
   Future<ArchiveState> build(String? categoryId) async {
+    _deleteItemUseCase = ref.read(deleteItemUseCaseProvider);
+
     final itemsAsync = ref.watch(tierListViewModelProvider);
     final items = itemsAsync.value ?? [];
 
@@ -28,9 +33,8 @@ class ArchiveViewModel extends _$ArchiveViewModel {
   }
 
   Future<void> restoreItem(String id) async {
-    final deleteItem = ref.read(deleteItemUseCaseProvider);
-    final result = await deleteItem(id, isDeleted: false);
-    if (result.isSuccess) {
+    final result = await _deleteItemUseCase(id, isDeleted: false);
+    if (result.isSuccess && ref.mounted) {
       ref.invalidate(tierListViewModelProvider);
     }
   }

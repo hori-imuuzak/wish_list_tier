@@ -33,7 +33,7 @@ final class TierListViewModelProvider
   TierListViewModel create() => TierListViewModel();
 }
 
-String _$tierListViewModelHash() => r'42aa97f8252d06b4c3ad3876fde490ed0759b3d3';
+String _$tierListViewModelHash() => r'1e6f57f183c06a46bc959a44716c7aabd070b0a8';
 
 abstract class _$TierListViewModel extends $AsyncNotifier<List<WishItem>> {
   FutureOr<List<WishItem>> build();

@@ -2,6 +2,8 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:uuid/uuid.dart';
 import 'package:wish_list_tier/domain/models/tier_type.dart';
 import 'package:wish_list_tier/domain/models/wish_item.dart';
+import 'package:wish_list_tier/domain/usecases/command/add_item_usecase.dart';
+import 'package:wish_list_tier/domain/usecases/command/update_item_usecase.dart';
 import 'package:wish_list_tier/domain/usecases/providers.dart';
 import 'package:wish_list_tier/presentation/viewmodels/tier_list_viewmodel.dart';
 
@@ -9,9 +11,13 @@ part 'item_editor_viewmodel.g.dart';
 
 @riverpod
 class ItemEditorViewModel extends _$ItemEditorViewModel {
+  late final AddItemUseCase _addItemUseCase;
+  late final UpdateItemUseCase _updateItemUseCase;
+
   @override
   void build() {
-    // No state needed, this is a command-only viewmodel
+    _addItemUseCase = ref.read(addItemUseCaseProvider);
+    _updateItemUseCase = ref.read(updateItemUseCaseProvider);
   }
 
   Future<void> createItem({
@@ -38,9 +44,8 @@ class ItemEditorViewModel extends _$ItemEditorViewModel {
       updatedAt: DateTime.now(),
     );
 
-    final addItem = ref.read(addItemUseCaseProvider);
-    final result = await addItem(newItem);
-    if (result.isSuccess) {
+    final result = await _addItemUseCase(newItem);
+    if (result.isSuccess && ref.mounted) {
       ref.invalidate(tierListViewModelProvider);
     }
   }
@@ -66,9 +71,8 @@ class ItemEditorViewModel extends _$ItemEditorViewModel {
       updatedAt: DateTime.now(),
     );
 
-    final updateItem = ref.read(updateItemUseCaseProvider);
-    final result = await updateItem(updatedItem);
-    if (result.isSuccess) {
+    final result = await _updateItemUseCase(updatedItem);
+    if (result.isSuccess && ref.mounted) {
       ref.invalidate(tierListViewModelProvider);
     }
   }
