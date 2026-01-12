@@ -17,7 +17,8 @@ class TierListViewModel extends _$TierListViewModel {
     final updateItem = ref.read(updateItemUseCaseProvider);
 
     // Ensure categories are loaded and migration happens if needed
-    final categories = await getCategories();
+    final categoriesResult = await getCategories();
+    final categories = categoriesResult.valueOrNull ?? [];
     if (categories.isEmpty) {
       // Migration: Create default category and assign existing items
       final defaultCategory = Category(
@@ -27,7 +28,8 @@ class TierListViewModel extends _$TierListViewModel {
       );
       await addCategory(defaultCategory);
 
-      final items = await getItems();
+      final itemsResult = await getItems();
+      final items = itemsResult.valueOrNull ?? [];
       for (final item in items) {
         if (item.categoryId == null) {
           await updateItem(item.copyWith(categoryId: defaultCategory.id));
@@ -35,12 +37,17 @@ class TierListViewModel extends _$TierListViewModel {
       }
     }
 
-    return getItems();
+    final result = await getItems();
+    return result.when(
+      success: (items) => items,
+      failure: (e) => throw e,
+    );
   }
 
   Future<List<Category>> getCategories() async {
     final getCategories = ref.read(getCategoriesUseCaseProvider);
-    return getCategories();
+    final result = await getCategories();
+    return result.valueOrNull ?? [];
   }
 
   Future<void> addCategory(String name) async {
@@ -50,32 +57,42 @@ class TierListViewModel extends _$TierListViewModel {
       name: name,
       createdAt: DateTime.now(),
     );
-    await addCategory(category);
-    ref.invalidateSelf();
+    final result = await addCategory(category);
+    if (result.isSuccess) {
+      ref.invalidateSelf();
+    }
   }
 
   Future<void> deleteCategory(String id) async {
     final deleteCategory = ref.read(deleteCategoryUseCaseProvider);
-    await deleteCategory(id);
-    ref.invalidateSelf();
+    final result = await deleteCategory(id);
+    if (result.isSuccess) {
+      ref.invalidateSelf();
+    }
   }
 
   Future<void> addItem(WishItem item) async {
     final addItem = ref.read(addItemUseCaseProvider);
-    await addItem(item);
-    ref.invalidateSelf();
+    final result = await addItem(item);
+    if (result.isSuccess) {
+      ref.invalidateSelf();
+    }
   }
 
   Future<void> updateItem(WishItem item) async {
     final updateItem = ref.read(updateItemUseCaseProvider);
-    await updateItem(item);
-    ref.invalidateSelf();
+    final result = await updateItem(item);
+    if (result.isSuccess) {
+      ref.invalidateSelf();
+    }
   }
 
   Future<void> deleteItem(String id, {bool isDeleted = true}) async {
     final deleteItem = ref.read(deleteItemUseCaseProvider);
-    await deleteItem(id, isDeleted: isDeleted);
-    ref.invalidateSelf();
+    final result = await deleteItem(id, isDeleted: isDeleted);
+    if (result.isSuccess) {
+      ref.invalidateSelf();
+    }
   }
 
   Future<void> moveItemToTier(String id, TierType tier) async {
@@ -94,19 +111,20 @@ class TierListViewModel extends _$TierListViewModel {
       state = AsyncValue.data(newItems);
 
       // Then update repository in background
-      try {
-        await moveItemToTier(id, tier);
-      } catch (e) {
+      final result = await moveItemToTier(id, tier);
+      if (result.isFailure) {
         // If error, revert to previous state
         state = AsyncValue.data(currentItems);
-        rethrow;
+        throw result.exceptionOrNull!;
       }
     }
   }
 
   Future<void> completeItem(String id) async {
     final completeItem = ref.read(completeItemUseCaseProvider);
-    await completeItem(id);
-    ref.invalidateSelf();
+    final result = await completeItem(id);
+    if (result.isSuccess) {
+      ref.invalidateSelf();
+    }
   }
 }

@@ -39,8 +39,10 @@ class ItemEditorViewModel extends _$ItemEditorViewModel {
     );
 
     final addItem = ref.read(addItemUseCaseProvider);
-    await addItem(newItem);
-    ref.invalidate(tierListViewModelProvider);
+    final result = await addItem(newItem);
+    if (result.isSuccess) {
+      ref.invalidate(tierListViewModelProvider);
+    }
   }
 
   Future<void> updateItem({
@@ -65,7 +67,9 @@ class ItemEditorViewModel extends _$ItemEditorViewModel {
     );
 
     final updateItem = ref.read(updateItemUseCaseProvider);
-    await updateItem(updatedItem);
-    ref.invalidate(tierListViewModelProvider);
+    final result = await updateItem(updatedItem);
+    if (result.isSuccess) {
+      ref.invalidate(tierListViewModelProvider);
+    }
   }
 }

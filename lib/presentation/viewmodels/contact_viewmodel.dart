@@ -17,19 +17,23 @@ class ContactViewModel extends _$ContactViewModel {
   }) async {
     state = state.copyWith(isLoading: true, error: null);
 
-    try {
-      final sendInquiry = ref.read(sendInquiryUseCaseProvider);
-      await sendInquiry(
-        title: title,
-        body: body,
-        email: email,
-      );
-      state = state.copyWith(isLoading: false);
-      return true;
-    } catch (e) {
-      state = state.copyWith(isLoading: false, error: e.toString());
-      return false;
-    }
+    final sendInquiry = ref.read(sendInquiryUseCaseProvider);
+    final result = await sendInquiry(
+      title: title,
+      body: body,
+      email: email,
+    );
+
+    return result.when(
+      success: (_) {
+        state = state.copyWith(isLoading: false);
+        return true;
+      },
+      failure: (e) {
+        state = state.copyWith(isLoading: false, error: e.toString());
+        return false;
+      },
+    );
   }
 }
 

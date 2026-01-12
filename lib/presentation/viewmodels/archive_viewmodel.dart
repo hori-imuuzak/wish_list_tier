@@ -29,8 +29,10 @@ class ArchiveViewModel extends _$ArchiveViewModel {
 
   Future<void> restoreItem(String id) async {
     final deleteItem = ref.read(deleteItemUseCaseProvider);
-    await deleteItem(id, isDeleted: false);
-    ref.invalidate(tierListViewModelProvider);
+    final result = await deleteItem(id, isDeleted: false);
+    if (result.isSuccess) {
+      ref.invalidate(tierListViewModelProvider);
+    }
   }
 }
 

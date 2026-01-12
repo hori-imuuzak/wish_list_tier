@@ -37,8 +37,10 @@ class ItemDetailViewModel extends _$ItemDetailViewModel {
     );
 
     final updateItem = ref.read(updateItemUseCaseProvider);
-    await updateItem(updatedItem);
-    ref.invalidate(tierListViewModelProvider);
+    final result = await updateItem(updatedItem);
+    if (result.isSuccess) {
+      ref.invalidate(tierListViewModelProvider);
+    }
   }
 
   Future<void> completeItem() async {
@@ -46,8 +48,10 @@ class ItemDetailViewModel extends _$ItemDetailViewModel {
     if (currentItem == null) return;
 
     final completeItem = ref.read(completeItemUseCaseProvider);
-    await completeItem(currentItem.id);
-    ref.invalidate(tierListViewModelProvider);
+    final result = await completeItem(currentItem.id);
+    if (result.isSuccess) {
+      ref.invalidate(tierListViewModelProvider);
+    }
   }
 
   Future<void> deleteItem() async {
@@ -55,8 +59,10 @@ class ItemDetailViewModel extends _$ItemDetailViewModel {
     if (currentItem == null) return;
 
     final deleteItem = ref.read(deleteItemUseCaseProvider);
-    await deleteItem(currentItem.id);
-    ref.invalidate(tierListViewModelProvider);
+    final result = await deleteItem(currentItem.id);
+    if (result.isSuccess) {
+      ref.invalidate(tierListViewModelProvider);
+    }
   }
 
   Future<bool> launchItemUrl() async {
